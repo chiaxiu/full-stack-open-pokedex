@@ -35,6 +35,13 @@ jobs:
           path: playwright-report/
           retention-days: 30
       - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: build failed
+        uses: rjstone/discord-webhook-notify@v1.0.4
+        if: failure()
+        with:
+          severity: error
+          details: Build failed
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
       - name: deploy to fly.io
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && !contains(toJson(github.event.commits.*.message), '#skip')}}
         run: flyctl deploy --remote-only
@@ -46,13 +53,6 @@ jobs:
         with:
           severity: info
           details: A new version of Pokedex deployed
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-      - name: build failed
-        uses: rjstone/discord-webhook-notify@v1.0.4
-        if: failure()
-        with:
-          severity: error
-          details: Build failed
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
   tag_release:
