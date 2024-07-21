@@ -6,7 +6,7 @@ on:
       - main
   pull_request:
     branches: [main]
-    types: [opened, synchronize, closed]
+    types: [opened, synchronize]
 
 jobs:
   simple_deployment_pipeline:
@@ -48,6 +48,8 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Set up git safe directory
+        run: git config --global --add safe.directory /github/workspace
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.merge_commit_sha }}
